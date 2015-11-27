@@ -43,10 +43,10 @@ describe "Test Suite sends a get request" do
   it "should read/get the hash at a specific ID" do
       id = TodosUtil.post
       r = TodosUtil.get id['id']
-      expect(r["title"]).to eq("An Item")
-      expect(r.code).to eq(200)
-      expect(r.message).to eq("OK")
-      expect(r['due']).to eq("2015-01-01")
+      expect(r["title"]).to eq(nil)
+      expect(r.code).to eq(204)
+      expect(r.message).to eq("No Content")
+      expect(r['due']).to eq(nil)
       #teardown
       TodosUtil.delete(id['id'])
   end
