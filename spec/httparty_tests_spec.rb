@@ -29,17 +29,20 @@ describe "Test Suite sends a post request" do
       expect(r.message).to eq("Unprocessable Entity")
   end
    it "should fail to make a post with specific id" do
-      r= HTTParty.post "http://lacedeamon.spartaglobal.com/todos/2248", query:{title: "An Item", due: "01-01-2012"} 
+      id = TodosUtil.post
+      r= HTTParty.post "http://lacedeamon.spartaglobal.com/todos/#{id['id']}", query:{title: "An Item", due: "01-01-2012"} 
       #verify
       expect(r.code).to eq(405)
       expect(r.message).to eq("Method Not Allowed")
+      #teardown
+      TodosUtil.delete(id['id'])
   end
 end
 
 describe "Test Suite sends a get request" do
   it "should read/get the hash at a specific ID" do
       id = TodosUtil.post
-      r= HTTParty.get "http://lacedeamon.spartaglobal.com/todos/#{id['id']}"
+      r = TodosUtil.get id['id']
       expect(r["title"]).to eq("An Item")
       expect(r.code).to eq(200)
       expect(r.message).to eq("OK")
@@ -65,7 +68,6 @@ describe "Test Suite sends a put request" do
     id = TodosUtil.post
     r= HTTParty.put "http://lacedeamon.spartaglobal.com/todos/#{id['id']}", query:{title: "Changed An Item to Another Item", due: "2015-01-01"}
     expect(r["title"]).to eq("Changed An Item to Another Item")
-   
     expect(r.code).to eq(200)
     expect(r.message).to eq("OK")
     expect(r['due']).to eq("2015-01-01")
