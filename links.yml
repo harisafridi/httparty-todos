@@ -1,0 +1,6 @@
+urls:
+  - post: http://lacedeamon.spartaglobal.com/todos
+    get: http://lacedeamon.spartaglobal.com/todos/
+    delete: http://lacedeamon.spartaglobal.com/todos/
+    title: "An Item"
+    due: "01-01-2020"
