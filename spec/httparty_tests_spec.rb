@@ -7,13 +7,13 @@ require "todos_module"
 describe "Test Suite sends a post request" do
   it "should create a new post in collection" do
      #execute
-      r= HTTParty.post "http://lacedeamon.spartaglobal.com/todos", query:{title: "An Item", due: "2015-01-01"}
+      id = TodosUtil.post
      #verify
-      expect(r["title"]).to eq("An Item")
-	    expect(r.code).to eq(201)
-      expect(r['due']).to eq("2015-01-01")
+      expect(id['title']).to eq("An Item")
+	    expect(id.code).to eq(201)
+      expect(id['due']).to eq("2015-01-01")
     #teardown
-      TodosUtil.delete(r['id'])
+      TodosUtil.delete(id['id'])
   end
   it "should fail to make a post without proper arguments" do
       r= HTTParty.post "http://lacedeamon.spartaglobal.com/todos", query:{title: "An Item"} 
@@ -32,16 +32,17 @@ end
 describe "Test Suite sends a get request" do
   it "should read/get the hash at a specific ID" do
       id = TodosUtil.post
-      r= HTTParty.get "http://lacedeamon.spartaglobal.com/todos/#{id}"
+      r= HTTParty.get "http://lacedeamon.spartaglobal.com/todos/#{id['id']}"
       expect(r["title"]).to eq("An Item")
       expect(r.code).to eq(200)
       expect(r['due']).to eq("2015-01-01")
       #teardown
-      TodosUtil.delete(r['id'])
+      TodosUtil.delete(id['id'])
   end
   it "should return an empty hash from an empty ID" do
       r= HTTParty.get "http://lacedeamon.spartaglobal.com/todos/00"
       expect(r.code).to eq(404)
+      expect(r.message).to eq("Not Found")
   end 
   it "should return all IDs if collection if requested" do
     r= HTTParty.get "http://lacedeamon.spartaglobal.com/todos/"
@@ -54,9 +55,9 @@ end
 describe "Test Suite sends a put request" do
   it "should update a single todo from an ID" do
     id = TodosUtil.post
-    r= HTTParty.put "http://lacedeamon.spartaglobal.com/todos/#{id}", query:{title: "Changed An Item to Another Item", due: "2015-01-01"}
+    r= HTTParty.put "http://lacedeamon.spartaglobal.com/todos/#{id['id']}", query:{title: "Changed An Item to Another Item", due: "2015-01-01"}
     expect(r["title"]).to eq("Changed An Item to Another Item")
-    expect(r["id"]).to eq(id)
+   
     expect(r.code).to eq(200)
     expect(r['due']).to eq("2015-01-01")
     #teardown
@@ -66,19 +67,29 @@ end
 
 describe "Test Suite sends a patch request" do
   it "should" do
-       r= HTTParty.get "http://lacedeamon.spartaglobal.com/todos"
-       r.each {|s|
-         HTTParty.delete "http://lacedeamon.spartaglobal.com/todos/#{r["id"]}" if r["title"] == "D4Y"}
+    id = TodosUtil.post
+    r= HTTParty.patch "http://lacedeamon.spartaglobal.com/todos/#{id['id']}", query:{title: "Changed An Item only but not due date"}
+    expect(r["title"]).to eq("Changed An Item only but not due date")
+    expect(r.code).to eq(200)
+    expect(r['due']).to eq("2015-01-01")
+    #teardown
+    TodosUtil.delete(r['id'])
   end
 end
 
 describe "Test suite sends a delete request" do
   it "should delete a single todo" do
+   
+    id = TodosUtil.post
+    delete=  TodosUtil.delete id['id']
+    expect(delete['id']).to eq (nil)  
+    expect(delete.code).to eq(204)
+    expect(delete.content_type).to eq(nil)
 
   end
   
   it "should not delete todo collection" do
-
+    
   end
   
   it "should not delete todo collection" do
