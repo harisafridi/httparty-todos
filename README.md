@@ -8,7 +8,3 @@ gem install RSpec
 
 gem install httparty
 ```
-
-###Structure:
-
-```TodosUtil::httparty_tests_spec```
